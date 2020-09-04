@@ -1,0 +1,125 @@
+# key value pair
+
+apiVersion: apps/v1
+
+kind: Deployment # you can also use "" or '' for string
+
+name: nginx-deployment
+
+
+# is for comments
+
+
+# how to wirte objects
+
+# object is like logical things with some properties
+
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+      env: development
+# check out the space here
+
+# Lists
+
+spec:
+    containers:
+    - name: nginx
+      image: nginx:1.14.2
+      ports:
+      - containerPort: 80
+      - containerPort: 8080
+    - name: mysql
+      image: mysql
+      ports:
+      - containerPort: 3306
+
+
+versions:
+ - 1
+ - 2
+ - 3
+
+versions: [1,2,3]
+
+
+
+# boolean
+
+something: true # True , on, yes
+something: false # False, off, no
+
+
+
+# Check YAML validate tools
+URL: https://onlineyamltools.com/validate-yaml
+
+
+# multiline strings we should use | This will be use mostly in config-map in kubernetes
+multiple lines: | 
+    this is first line
+    and this is second line
+
+multiple lines: > # this will be considered as single line like this is first line and this is considered as in the same line
+    this is first line
+    and this is considered as in the same line
+# Example
+# powershell.exe -command $($services=get-service);$(foreach($service in $services){write-host $service.name})
+command:
+ - powershell
+ - -command
+ - >
+    $($services=get-service);
+    $(foreach($service in $services){write-host $service.name})
+
+command:
+ - /bin/sh
+ - -ec
+ - >-
+   mysql -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD -e 'SELECT 1'
+
+
+multiple yaml doc in single yaml file
+
+add 
+---
+apiVersion: apps/v1 # key-value pairs
+kind: Deployment # key-value pairs
+metadata: # object
+  name: nginx-deployment
+spec: # object
+  selector:
+    matchLabels:
+      app: nginx
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:   # object
+        app: nginx
+    spec: 
+      containers: # list of objects
+      - name: nginx
+        image: nginx:1.14.2
+        ports: # list
+        - containerPort: 80
+      - name: mysql
+        image: mysql
+        ports:
+        - containerPort: 3306    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+        
+
+
+

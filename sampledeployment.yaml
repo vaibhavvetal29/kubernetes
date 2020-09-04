@@ -1,0 +1,23 @@
+apiVersion: apps/v1 # key-value pairs
+kind: Deployment # key-value pairs
+metadata: # object
+  name: nginx-deployment
+spec: # object
+  selector:
+    matchLabels:
+      app: nginx
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:   # object
+        app: nginx
+    spec: 
+      containers: # list of objects
+      - name: nginx
+        image: nginx:1.14.2
+        ports: # list
+        - containerPort: 80
+      - name: mysql
+        image: mysql
+        ports:
+        - containerPort: 3306
