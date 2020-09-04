@@ -1,0 +1,11 @@
+create namespace
+
+kubectl create namespace itns
+
+dns resourcename.namespacename.resourcetype.cluster.local
+
+kubectl get pods -n kube-system
+
+you can also set the context to the specific namespace
+
+kubectl config set-context $(kubectl config current-context) --namespace=itns

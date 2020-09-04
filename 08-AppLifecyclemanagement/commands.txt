@@ -1,0 +1,46 @@
+create some deployment
+
+now check the rollout status of deployment
+kubectl rollout status deployment/myrelease-deployment
+kubectl rollout history deployment/myrelease-deployment
+
+Deployment Strategy
+making all down and then make all new up
+Recreate
+
+making one by one old version down and new up
+Rolling Update
+
+
+kubectl set image deployment/myrelease-deployment nginx=nginx:alpine
+
+kubectl rollout undo deployment/myrelease-deployment
+
+
+
+kubectl rollout pause deployment/myrelease-deployment
+kubectl set image deployment/myrelease-deployment nginx=nginx:1.16.1
+kubectl rollout resume deployment/myrelease-deployment
+
+check rollout status
+echo $?
+
+
+Failed Deployment 
+Your Deployment may get stuck trying to deploy its newest ReplicaSet without ever completing. This can occur due to some of the following factors:
+
+Insufficient quota
+Readiness probe failures
+Image pull errors
+Insufficient permissions
+Limit ranges
+Application runtime misconfiguration
+
+
+kubectl patch deployment/myrelease-deployment -p '{"spec":{"progressDeadlineSeconds":600}}'
+
+Once the deadline has been exceeded, the Deployment controller adds a DeploymentCondition with the following attributes to the Deployment's .status.conditions:
+
+Type=Progressing
+Status=False
+Reason=ProgressDeadlineExceeded

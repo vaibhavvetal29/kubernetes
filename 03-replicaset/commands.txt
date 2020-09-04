@@ -1,0 +1,16 @@
+Monitor kubernetes object
+Fault Tolerants
+Load Balancing and Scaling
+
+Replication Controller and repliaset
+
+
+how to update replicaset
+
+update YAML file and run below commands
+kubectl replace -f <file>
+
+kubectl scale --replicas=4 -f <file>
+
+kubectl scale --replicase=3 replicaset myfirstpod-rs
+

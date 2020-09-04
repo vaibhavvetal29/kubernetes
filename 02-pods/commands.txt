@@ -1,0 +1,15 @@
+By default create deployment in previous  version
+kubectl run mynig --image=nginx
+
+To create a pod 
+kubectl run --generator=run-pod/v1 foobar --image=nginx
+
+to create a pod with --dry-run
+kubectl create deployment mynewpod --image=nginx -o yaml --dry-run
+
+
+
+
+
+
+

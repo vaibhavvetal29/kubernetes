@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: myrelease-recreate-dp
+   labels:
+      app: myfirstdeployapp-recreate
+spec:
+  template:
+    metadata:
+        name: myfirstdeploypod-recreate
+        labels:
+          app: myfirstdeployapp-recreate
+    spec:
+      containers:
+        - name: mynginxcontainer
+          image: nginx
+  replicas: 5
+  selector:
+     matchLabels:
+         app: myfirstdeployapp-recreate
+  strategy:
+    type: Recreate
+

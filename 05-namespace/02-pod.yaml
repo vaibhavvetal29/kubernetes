@@ -1,10 +1,16 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+   name: hrns
+---
+apiVersion: v1
 kind: Pod
 metadata:
-  name: myfirstpod
+  name: hrpod
+  namespace: hrns
   labels:
-     app: myfirstapp
-     function: IT
+     app: myhrpod
+     function: HR
 spec:
   containers:
     - name: mynginxcontainer

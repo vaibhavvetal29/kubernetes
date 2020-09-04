@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: myrelease-rollingupdate-dp
+   labels:
+      app: myfirstdeployapp-rollingupdate
+spec:
+  template:
+    metadata:
+        name: myfirstdeploypod-rollingupdate
+        labels:
+          app: myfirstdeployapp-rollingupdate
+    spec:
+      containers:
+        - name: mynginxcontainer
+          image: nginx:alpine
+  replicas: 5
+  selector:
+     matchLabels:
+         app: myfirstdeployapp-rollingupdate
+  strategy: 
+  type: rollingUpdate
+

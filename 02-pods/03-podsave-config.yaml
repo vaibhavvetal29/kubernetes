@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: myfirstpod
+  name: myfirstpodsave
   labels:
      app: myfirstapp
      function: IT

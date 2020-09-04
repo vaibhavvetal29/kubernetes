@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+ name: say-something
+spec:
+ template:
+   metadata:
+     name: say-something
+   spec:
+     containers:
+     - name: say-something
+       image: busybox
+       command: ["echo", "Running a job"]
+     restartPolicy: OnFailure # Never / OnFailure

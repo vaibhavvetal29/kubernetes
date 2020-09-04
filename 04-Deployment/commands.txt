@@ -1,0 +1,10 @@
+# Why Deloyments are required
+
+
+
+
+kubectl create deployment --image=nginx nginx --dry-run -o yaml
+
+kubectl create deployment --image=nginx nginx --dry-run -o yaml
+
+kubectl scale deployment 
