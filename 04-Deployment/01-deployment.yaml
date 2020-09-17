@@ -20,3 +20,9 @@ spec:
          app: myfirstdeployapp
 
 
+## kubectl get pods
+## kuebctl get pods --show-labels
+## kubectl get pods -l app=myfirstapp
+## kubectl get pods -l app=myfirstapp --no-headers
+## kubectl get pods -l app=myfirstapp --no-headers | wc -l
+## kubectl get pods -l app=myfirstapp,function=IT

@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Pod 
 metadata:
-  name: myfirstpod
+  name: mymanualschpod
   labels:
-     app: myfirstapp
+     app: mymanualschapp
      function: IT
 spec:
   containers:
@@ -11,3 +11,5 @@ spec:
       image: nginx
       ports:
         - containerPort: 80
+  nodeName: kubemaster
+

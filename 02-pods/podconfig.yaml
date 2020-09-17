@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mynewpod
+  name: mynewpod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mynewpod
+  template:
+    metadata:
+      labels:
+        app: mynewpod
+    spec:
+      containers:
+      - image: mysql
+        name: mysql
+
+

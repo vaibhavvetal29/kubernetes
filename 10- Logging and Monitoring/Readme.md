@@ -1,0 +1,4 @@
+kubectl logs -f podname
+
+
+

@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: mymanualschpod
+  labels:
+     app: mymanualschapp
+     function: IT
+spec:
+  containers:
+    - name: mynginxcontainer
+      image: nginx
+      ports:
+        - containerPort: 80
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd  
+
+
+
+
+# how to label nodes
+#kubectl label nodes {nodename} key=value
+
+# We can't use node selector for negative condition for that need to use affinity
+

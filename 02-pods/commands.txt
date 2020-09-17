@@ -1,3 +1,10 @@
+how to check api names and object relation
+
+kubectl api-resources
+
+to get the documnetation in the kubernetes cluster
+kubectl explain pods 
+
 By default create deployment in previous  version
 kubectl run mynig --image=nginx
 

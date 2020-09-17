@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Binding
+metadata:
+  name: mymanualschpod
+target:
+  apiversion: v1
+  kind: Node
