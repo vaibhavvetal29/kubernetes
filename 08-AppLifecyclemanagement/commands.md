@@ -44,3 +44,69 @@ Once the deadline has been exceeded, the Deployment controller adds a Deployment
 Type=Progressing
 Status=False
 Reason=ProgressDeadlineExceeded
+
+
+### Help me to check the default command in case of below images
+    1) nginx
+    2) ubuntu
+
+`docker run ubuntu sleep 5`
+
+CMD sleep 5
+CMD ["command","args"]
+
+
+FROM Ubuntu
+
+ENTRYPOINT ["sleep"]
+
+
+FROM Ubuntu
+
+ENTRYPOINT ["sleep"]
+
+CMD ["5"]
+
+
+## Add below paramater in the Ubuntu image and then create a pod 
+command: ["sleep"]
+args: ["10"]
+
+
+### Environement Variables
+env:
+ - name: myenv
+   value: test
+
+### Task check how to use valueFrom:
+    1) configMapRef
+    2) secretkeyRef
+
+
+### Config Maps: /// Trubleshoot what is missing in below configmap command
+`kubectl create configmap --from-literal=myuser=dinesh`
+`kubectl create configmap --from-literal=myuser=dinesh --from-literal=mylastname=patil`
+
+#### Task create the same using the declarative approach
+
+
+Using config maps in Pods
+envFrom:
+ - configMapRef:
+     name: myconfig
+
+
+### Secrets
+`kuebctl create secret mysecret --from-literal=myuser="dinesh"`
+
+echo -n "dinesh" | base64
+
+
+
+### Multicontainer Pods
+
+Create POD with multicontaien rin it
+
+### initContainers
+ 
+
