@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: myfirstpod-deployment1
+   labels:
+      app: myfirstdeployapp1
+spec:
+  template:
+    metadata:
+        name: myfirstdeploypod1
+        labels:
+          app: myfirstdeployapp1
+    spec:
+      containers:
+        - name: mynginxcontainer
+          image: nginx
+  replicas: 2
+  selector:
+     matchLabels:
+         app: myfirstdeployapp1
+
+
+## kubectl get pods
+## kuebctl get pods --show-labels
+## kubectl get pods -l app=myfirstapp
+## kubectl get pods -l app=myfirstapp --no-headers
+## kubectl get pods -l app=myfirstapp --no-headers | wc -l
+## kubectl get pods -l app=myfirstapp,function=IT

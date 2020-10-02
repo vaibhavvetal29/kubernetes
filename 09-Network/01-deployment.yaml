@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: myappdp
+   labels:
+      app: myprodapp
+spec:
+  template:
+    metadata:
+        name: svcdeployapp
+        labels:
+          app: svcdeploy
+    spec:
+      containers:
+        - name: myapplication
+          image: nginx
+  replicas: 2
+  selector:
+     matchLabels:
+         app: svcdeployapp
+
+
+## kubectl get pods
+## kuebctl get pods --show-labels
+## kubectl get pods -l app=myfirstapp
+## kubectl get pods -l app=myfirstapp --no-headers
+## kubectl get pods -l app=myfirstapp --no-headers | wc -l
+## kubectl get pods -l app=myfirstapp,function=IT

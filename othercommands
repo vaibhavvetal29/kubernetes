@@ -1,0 +1,2 @@
+watch command
+watch -n 1 kubectl get pod,deploy,rs,svc

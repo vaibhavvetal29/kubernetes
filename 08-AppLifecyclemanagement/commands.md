@@ -12,7 +12,7 @@ making one by one old version down and new up
 Rolling Update
 
 
-kubectl set image deployment/myrelease-deployment nginx=nginx:alpine
+kubectl set image deployment/myrelease-rollingupdate-dp nginx=nginx:alpine
 
 kubectl rollout undo deployment/myrelease-deployment
 
@@ -70,22 +70,33 @@ CMD ["5"]
 
 ## Add below paramater in the Ubuntu image and then create a pod 
 command: ["sleep"]
-args: ["10"]
-
+args: ["10","-q",""]
 
 ### Environement Variables
 env:
  - name: myenv
    value: test
+ 
+
+
+
+
 
 ### Task check how to use valueFrom:
     1) configMapRef
     2) secretkeyRef
 
-
 ### Config Maps: /// Trubleshoot what is missing in below configmap command
 `kubectl create configmap --from-literal=myuser=dinesh`
 `kubectl create configmap --from-literal=myuser=dinesh --from-literal=mylastname=patil`
+```yaml
+env:
+            - name: usernameref
+              valueFrom:
+                configMapKeyRef:
+                    name: namemaps1
+```
+
 
 #### Task create the same using the declarative approach
 

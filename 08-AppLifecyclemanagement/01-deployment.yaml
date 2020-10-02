@@ -14,6 +14,11 @@ spec:
       containers:
         - name: mynginxcontainer
           image: nginx
+          envFrom:
+           - configMapRef: 
+                name: namemaps1
+           - secretRef:
+                name: mysecret2
   replicas: 5
   selector:
      matchLabels:

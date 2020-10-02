@@ -18,6 +18,5 @@ spec:
   selector:
      matchLabels:
          app: myfirstdeployapp-rollingupdate
-  strategy: 
-  type: rollingUpdate
+
 

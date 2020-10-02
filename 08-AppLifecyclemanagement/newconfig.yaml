@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  company: Netmagic
+  myname: dinesh
+  mylastname: patil
+  function: IT
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: newconfig

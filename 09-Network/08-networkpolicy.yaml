@@ -1,0 +1,66 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: networkpolns
+  labels:
+    test: networkpolicy
+
+---
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: networkpolpod
+  namespace: networkpolns
+  labels:
+     app: networkpolapp
+     function: IT
+spec:
+  containers:
+    - name: npolnginx
+      image: nginx
+      ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: ingresspod
+  namespace: networkpolns
+  labels:
+     app: ingresspod
+     function: IT
+     role: everyone
+spec:
+  containers:
+    - name: ingresscon
+      image: nginx
+      ports:
+        - containerPort: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default
+  namespace: networkpolns
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: public-ingress
+  namespace: networkpolns
+spec:
+  podSelector:
+    matchExpressions:
+      - {key: role, operator: In, values: [everyone]}
+  policyTypes:
+  - Ingress
+  ingress:
+    - {}
