@@ -9,8 +9,8 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: 9376
+      targetPort: 80
     - name: https
       protocol: TCP
       port: 443
-      targetPort: 9377
+      targetPort: 8080

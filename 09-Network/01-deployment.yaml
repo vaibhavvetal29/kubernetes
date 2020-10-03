@@ -7,17 +7,17 @@ metadata:
 spec:
   template:
     metadata:
-        name: svcdeployapp
+        name: svcdeployapp # Pod name
         labels:
-          app: svcdeploy
+          app: svcdeploy #db
     spec:
       containers:
         - name: myapplication
-          image: nginx
+          image: nginx # mysql
   replicas: 2
   selector:
      matchLabels:
-         app: svcdeployapp
+         app: svcdeploy
 
 
 ## kubectl get pods
