@@ -5,13 +5,42 @@ Refer https://github.com/kelseyhightower/kubernetes-the-hard-way
 
 sudo apt install golang-cfssl
 
-### Create a dns host records on each node in /etc/hosts file
+#### Check Installation
+`cfssl version`
 
-192.168.1.51 kubemaster01
-192.168.1.52 kubemaster02
-192.168.1.53 lbserver
-192.168.1.54 kubenode01
-192.168.1.55 kubenode02
+
+### Install kubectl 
+
+refer https://kubernetes.io/docs/tasks/tools/install-kubectl/
+
+KUBECTLVERSION="v1.18.6"
+
+##### Download file
+
+`curl -LO "https://storage.googleapis.com/kubernetes-release/release/$KUBECTLVERSION/bin/linux/amd64/kubectl"`
+
+##### Make Kubectl binary executable
+
+`chmod +x ./kubectl`
+
+##### MOve the binary to your PATH
+
+`sudo mv ./kubectl /usr/local/bin/kubectl`
+
+##### Test kubectl version
+
+`kubectl version --client`
+
+
+
+### Create a dns host records on each node in /etc/hosts file
+#### Note: Check the IP Address and hostname in your setup given
+
+192.168.2.51 kubemaster01
+192.168.2.52 kubemaster02
+192.168.2.50 kubelb
+192.168.2.61 kubenode01
+192.168.2.62 kubenode02
 
 Note : Check specifically the Ip's before adding records.
 
@@ -24,21 +53,24 @@ ssh-keygen
 cat .ssh/id_rsa.pub
 
 ##### It looks like below
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCheQfgXtXJXD2Rdr69DNrPhOHKB5/AZPmi7yzeknuzk841Uw0HMwn44g6ZH0luvYxfQTiLdOpw1BUamLTFJ5RzlagRwFZOQ0bsQOTzJ9EUY3koEH0UuqEhheMOpi+kzoQUyaycKWuyXlYqsW4pejno75sIYKd0pwO5YtHoH9Cfn98fD8hIDzHhm+BHRb3yYR770RVRV0RViCBcmFWxFxlbqfR6G8y1x0Pgax5hHlMs1rBulKm4nvXtHF1sH6TAp+9LMVFtkmh8sZ/oHy2YTt1y2osfCuBt6jZN4z6TBA9sW6nbrhUxoBRwWVKD7AOesWIl/+ar40AO6D2DafrdqZvH kubeadmin@kubemaster01
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCM0Evq2Zw+2N7sWXrm/O8vZPevCshyWtyfxSFjPbTnyDOOBaA7pCOiGGqrbTPjYzE2MUjmglTOAxP5I9EyhS8tO8Lmjrt4qDvEHJJLTXrwlZz6H3DQeFQptk+Kz7FFyaJHnCeV+o0rtxvmszTG0KJzcfI9oPLsiecATPSHNlZJ3WyLHrmcjVZkUT8eQMolvHaWiBi4fTsZXHMTQbHQC+ic9Lq51DNYxf3etsuODMSURIqgr9xf1WURLQNMX559cOfFJ8P+MvOHK4+Cjx7mCEr+W8SnmO8i4CrDLtueP1YEF1vxps6LHaov+RfwbjC/YXh1zs2ewXG+O2y6EiFocZh dinesh@kubemaster01
 
 ###### Note By default .ssh folder does not exist
 Create folder first 
 `mkdir .ssh`
 cat >>~/.ssh/authorized_keys <<EOF
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCheQfgXtXJXD2Rdr69DNrPhOHKB5/AZPmi7yzeknuzk841Uw0HMwn44g6ZH0luvYxfQTiLdOpw1BUamLTFJ5RzlagRwFZOQ0bsQOTzJ9EUY3koEH0UuqEhheMOpi+kzoQUyaycKWuyXlYqsW4pejno75sIYKd0pwO5YtHoH9Cfn98fD8hIDzHhm+BHRb3yYR770RVRV0RViCBcmFWxFxlbqfR6G8y1x0Pgax5hHlMs1rBulKm4nvXtHF1sH6TAp+9LMVFtkmh8sZ/oHy2YTt1y2osfCuBt6jZN4z6TBA9sW6nbrhUxoBRwWVKD7AOesWIl/+ar40AO6D2DafrdqZvH kubeadmin@kubemaster01
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCM0Evq2Zw+2N7sWXrm/O8vZPevCshyWtyfxSFjPbTnyDOOBaA7pCOiGGqrbTPjYzE2MUjmglTOAxP5I9EyhS8tO8Lmjrt4qDvEHJJLTXrwlZz6H3DQeFQptk+Kz7FFyaJHnCeV+o0rtxvmszTG0KJzcfI9oPLsiecATPSHNlZJ3WyLHrmcjVZkUT8eQMolvHaWiBi4fTsZXHMTQbHQC+ic9Lq51DNYxf3etsuODMSURIqgr9xf1WURLQNMX559cOfFJ8P+MvOHK4+Cjx7mCEr+W8SnmO8i4CrDLtueP1YEF1vxps6LHaov+RfwbjC/YXh1zs2ewXG+O2y6EiFocZh dinesh@kubemaster01
 EOF
 
+
+### Let's create a workdir to create all our certification and configuration
 mkdir workdir
 cd workdir
 
 
 ### Provision the certificate authority(CA)
 
+```
 {
 
 cat > ca-config.json << EOF
@@ -79,13 +111,20 @@ EOF
 cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 
 }
+```
+**Check the files created soreted by created time**
+ls -ltc
+ls -ltc | head -4
+ls -ltc | tail -4
 
 ### Admin Client cert
+
+Generate the `admin` client certificate and private key:
 
 Check below links for various groups for cert
 https://kubernetes.io/docs/reference/access-authn-authz/rbac/#:~:text=system%3Amasters%20group,cluster%20and%20in%20all%20namespaces. 
 
-
+```
 {
 
 cat > admin-csr.json << EOF
@@ -115,12 +154,27 @@ cfssl gencert \
   admin-csr.json | cfssljson -bare admin
 
 }
+```
 
 ### Worker Node Certificate (kubelet client certs)
+
+Kubernetes uses a [special-purpose authorization mode](https://kubernetes.io/docs/admin/authorization/node/) called Node Authorizer, that specifically authorizes API requests made by [Kubelets](https://kubernetes.io/docs/concepts/overview/components/#kubelet). In order to be authorized by the Node Authorizer, Kubelets must use a credential that identifies them as being in the `system:nodes` group, with a username of `system:node:<nodeName>`. In this section you will create a certificate for each Kubernetes worker node that meets the Node Authorizer requirements.
+
+```
 {
-cat > kubenode01-csr.json << EOF
+
+declare -A nodearray
+
+nodearray["kubenode01"]="192.168.2.61"
+nodearray["kubenode02"]="192.168.2.62"
+
+for i in ${!nodearray[@]}; do
+
+echo working on $i with ip ${nodearray[$i]}
+
+cat > ${i}-csr.json << EOF
 {
-  "CN": "system:node:kubenode01",
+  "CN": "system:node:${i}",
   "key": {
     "algo": "rsa",
     "size": 2048
@@ -141,41 +195,18 @@ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
-  -hostname=192.168.1.54,kubenode01 \
+  -hostname=${nodearray[$i]},${i} \
   -profile=kubernetes \
-  kubenode01-csr.json | cfssljson -bare kubenode01
+  ${i}-csr.json | cfssljson -bare ${i}
 
-cat > kubenode02-csr.json << EOF
-{
-  "CN": "system:node:kubenode02",
-  "key": {
-    "algo": "rsa",
-    "size": 2048
-  },
-  "names": [
-    {
-      "C": "US",
-      "L": "Portland",
-      "O": "system:nodes",
-      "OU": "Kubernetes The Hard Way",
-      "ST": "Oregon"
-    }
-  ]
+done
 }
-EOF
-
-cfssl gencert \
-  -ca=ca.pem \
-  -ca-key=ca-key.pem \
-  -config=ca-config.json \
-  -hostname=192.168.1.55,kubenode02 \
-  -profile=kubernetes \
-  kubenode02-csr.json | cfssljson -bare kubenode02
-
-}
+```
 
 
 ### kube Controller Manager
+Generate the `kube-controller-manager` client certificate and private key:
+```
 {
 
 cat > kube-controller-manager-csr.json << EOF
@@ -205,8 +236,11 @@ cfssl gencert \
   kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
 
 }
+```
 
 ### Kube Proxy Client cert
+Generate the `kube-proxy` client certificate and private key:
+```
 {
 
 cat > kube-proxy-csr.json << EOF
@@ -236,8 +270,10 @@ cfssl gencert \
   kube-proxy-csr.json | cfssljson -bare kube-proxy
 
 }
-
+```
 ### kube-scheduler client certificate
+Generate the `kube-scheduler` client certificate and private key:
+```
 {
 
 cat > kube-scheduler-csr.json << EOF
@@ -267,9 +303,14 @@ cfssl gencert \
   kube-scheduler-csr.json | cfssljson -bare kube-scheduler
 
 }
-
+```
 
 ### kubeapi server
+
+The `kubernetes-the-hard-way` static IP address will be included in the list of subject alternative names for the Kubernetes API Server certificate. This will ensure the certificate can be validated by remote clients.
+```
+KUBERNETES_MASTER_IP_ADDRESS=192.168.2.50,192.168.2.51,192.168.2.52
+KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local,localhost
 
 {
 
@@ -296,14 +337,18 @@ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
-  -hostname=10.96.0.1,127.0.0.1,192.168.1.51,192.168.1.52,192.168.1.53,kubemaster01,kubemaster02,lbserver,localhost,kubernetes,kubernetes.default.svc,kubernetes.default.svc.cluster.local,kubernetes.default \
+  -hostname=10.32.0.1,127.0.0.1,${KUBERNETES_MASTER_IP_ADDRESS},${KUBERNETES_HOSTNAMES} \
   -profile=kubernetes \
   kubernetes-csr.json | cfssljson -bare kubernetes
 
 }
+```
 
 ### Service Account
 
+The Kubernetes Controller Manager leverages a key pair to generate and sign service account tokens as described in the [managing service accounts](https://kubernetes.io/docs/admin/service-accounts-admin/) documentation.
+
+```
 {
 
 cat > service-account-csr.json << EOF
@@ -334,5 +379,73 @@ cfssl gencert \
 
 }
 
+```
 
+ETCD Server Certificate
+
+```
+KUBERNETES_ETCD_IP_ADDRESS=192.168.2.51,192.168.2.52
+
+{
+
+cat > etcd-csr.json << EOF
+{
+  "CN": "etcd-server",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "IN",
+      "L": "Mumbai",
+      "O": "Kubernetes",
+      "OU": "Kubernetes The Hard Way",
+      "ST": "Maharashtra"
+    }
+  ]
+}
+EOF
+
+cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -hostname=${KUBERNETES_ETCD_IP_ADDRESS} \
+  -profile=kubernetes \
+  etcd-csr.json | cfssljson -bare etcd-server
+
+}
+```
+
+
+### Distribute the Certificates
+
+Copy required files on the controller plane masters
+
+```
+declare -A masterarray
+
+masterarray["kubemaster01"]="192.168.2.61"
+masterarray["kubemaster02"]="192.168.2.62"
+
+for masternode in ${!masterarray[@]}; do
+  scp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem service-account-key.pem service-account.pem etcd-server.pem etcd-server-key.pem ${masternode}:~/
+done
+
+```
+
+Copy required files on the nodes
+
+```
+declare -A nodearray
+
+nodearray["kubenode01"]="192.168.2.61"
+nodearray["kubenode02"]="192.168.2.62"
+
+for node in ${!nodearray[@]}; do
+  scp ca.pem ${node}.pem ${node}-key.pem ${node}:~/
+done
+
+```
 
