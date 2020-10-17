@@ -1,0 +1,35 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: ca.crt
+    server: https://192.168.2.51:6443
+  name: kind-kind
+- cluster:
+    server: ""
+  name: kind-kind1
+- cluster:
+    certificate-authority: kube-ca.crt
+    server: https://10.10.0.1:6443
+  name: kind-kubecluster21
+contexts:
+- context:
+    cluster: kind-kind
+    namespace: developerns
+    user: kind-kind
+  name: kind-kindcon
+- context:
+    cluster: ""
+    user: ""
+  name: kind-kubecluster2con
+current-context: ""
+kind: Config
+preferences: {}
+users:
+- name: kind-kind
+  user:
+    password: P@ssw0rd
+    username: dinesh
+- name: kind-kubecluster2
+  user:
+    client-certificate: kubecluster2.crt
+    client-key: kubecluster2.key
