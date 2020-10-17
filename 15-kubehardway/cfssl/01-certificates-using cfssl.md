@@ -254,7 +254,7 @@ cat > kube-proxy-csr.json << EOF
     {
       "C": "IN",
       "L": "Mumbai",
-      "O": "system:node-proxier",
+      "O": "system:node-proxy",
       "OU": "Kubernetes The Hard Way",
       "ST": "Maharashtra"
     }
@@ -316,7 +316,7 @@ KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubern
 
 cat > kubernetes-csr.json << EOF
 {
-  "CN": "kubernetes",
+  "CN": "kube-apiserver",
   "key": {
     "algo": "rsa",
     "size": 2048
@@ -325,7 +325,7 @@ cat > kubernetes-csr.json << EOF
     {
       "C": "IN",
       "L": "Mumbai",
-      "O": "Kubernetes",
+      "O": "kube-apiserver",
       "OU": "Kubernetes The Hard Way",
       "ST": "Maharashtra"
     }
@@ -384,7 +384,7 @@ cfssl gencert \
 ETCD Server Certificate
 
 ```
-KUBERNETES_ETCD_IP_ADDRESS=192.168.2.51,192.168.2.52
+KUBERNETES_ETCD_IP_ADDRESS=192.168.2.51,192.168.2.52,127.0.0.1
 
 {
 

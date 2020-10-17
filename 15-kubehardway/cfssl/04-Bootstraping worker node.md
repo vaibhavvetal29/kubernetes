@@ -157,7 +157,7 @@ apiVersion: kubeproxy.config.k8s.io/v1alpha1
 clientConnection:
   kubeconfig: "/var/lib/kube-proxy/kubeconfig"
 mode: "iptables"
-clusterCIDR: "10.200.0.0/16"
+clusterCIDR: "192.168.2.0/24"
 EOF
 
 **kube-proxy service file**

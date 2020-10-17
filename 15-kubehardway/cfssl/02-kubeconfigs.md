@@ -12,7 +12,7 @@ In this section you will generate kubeconfig files for the `controller manager`,
 
 Each kubeconfig requires a Kubernetes API Server to connect to. To support high availability the IP address assigned to the external(virtual) load balancer fronting the Kubernetes API Servers will be used.
 
-KUBERNETES_LB_ADDRESS="192.168.0.50"
+KUBERNETES_LB_ADDRESS="192.168.2.50"
 
 ### The kubelet Kubernetes Configuration File
 
@@ -23,7 +23,7 @@ When generating kubeconfig files for Kubelets the client certificate matching th
 Generate a kubeconfig file for each worker node:
 
 ```
-KUBERNETES_LB_ADDRESS="192.168.0.50"
+KUBERNETES_LB_ADDRESS="192.168.2.50"
 declare -A nodearray
 
 nodearray["kubenode01"]="192.168.2.61"
