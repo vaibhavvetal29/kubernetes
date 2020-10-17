@@ -163,6 +163,29 @@ EOF
 openssl genrsa -out ${i}.key 2048
 openssl req -new -key ${i}.key -subj "/CN=system:node:${i}/O=system:nodes" -out ${i}.csr -config openssl-${i}.cnf
 openssl x509 -req -in ${i}.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out ${i}.crt -extensions v3_req -extfile openssl-${i}.cnf -days 1000
+
+{
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=ca.crt \
+    --embed-certs=true \
+    --server=https://${LOADBALANCER_ADDRESS}:6443 \
+    --kubeconfig=${i}.kubeconfig
+
+  kubectl config set-credentials system:node:${i} \
+    --client-certificate=${i}.crt \
+    --client-key=${i}.key \
+    --embed-certs=true \
+    --kubeconfig=${i}.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:node:${i} \
+    --kubeconfig=${i}.kubeconfig
+
+  kubectl config use-context default --kubeconfig=${i}.kubeconfig
+}
+
+
 done
 }
 ```
@@ -354,18 +377,3 @@ nodearray["kubenode02"]="192.168.2.62"
 for node in ${!nodearray[@]}; do
   scp ca.pem ${node}.pem ${node}-key.pem ${node}:~/
 done
-
-
-
-
-
-Copy the appropriate certificates and private keys to each controller instance:
-
-```
-for instance in master-1 master-2; do
-  scp ca.crt ca.key kube-apiserver.key kube-apiserver.crt \
-    service-account.key service-account.crt \
-    etcd-server.key etcd-server.crt \
-    ${instance}:~/
-done
-```

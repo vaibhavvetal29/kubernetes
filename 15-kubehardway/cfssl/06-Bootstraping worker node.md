@@ -19,6 +19,10 @@ wget -q --show-progress --https-only --timestamping \
   https://storage.googleapis.com/kubernetes-release/release/v1.10.2/bin/linux/amd64/kube-proxy \
   https://storage.googleapis.com/kubernetes-release/release/v1.10.2/bin/linux/amd64/kubelet
 
+
+
+
+
 sudo mkdir -p \
   /etc/cni/net.d \
   /opt/cni/bin \

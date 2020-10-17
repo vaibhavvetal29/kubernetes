@@ -106,8 +106,9 @@ EOF
 ### Configure the Kubernetes Controller Manager
 
 Move the `kube-controller-manager` kubeconfig into place:
+
 ```
-sudo mv kube-controller-manager.kubeconfig /var/lib/kubernetes/
+sudo cp kube-controller-manager.kubeconfig /var/lib/kubernetes/
 
 cat <<EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
 [Unit]
@@ -176,6 +177,11 @@ sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
 }
 ```
 
+### Test the cluster
+```
+kubectl get componentstatuses --kubeconfig admin.kubeconfig
+```
+
 #### LOad Balancer config
 
 
@@ -200,7 +206,7 @@ EOF
 sudo service haproxy restart
 
 
-curl  https://192.168.1.53:6443/version -k
+curl  https://192.168.2.50:6443/version -k
 
 
 

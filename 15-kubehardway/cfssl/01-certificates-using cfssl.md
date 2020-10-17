@@ -17,7 +17,7 @@ KUBECTLVERSION="v1.18.6"
 
 ##### Download file
 
-`curl -LO "https://storage.googleapis.com/kubernetes-release/release/$KUBECTLVERSION/bin/linux/amd64/kubectl"`
+`curl -LO "https://storage.googleapis.com/kubernetes-release/release/${}/bin/linux/amd64/kubectl"`
 
 ##### Make Kubectl binary executable
 

@@ -36,7 +36,7 @@ sudo mv etcd-${ETCD_VERSION}-linux-amd64/etcd* /usr/local/bin/
 ```
 {
 sudo mkdir -p /etc/etcd /var/lib/etcd 
-sudo cp ca.pem etcd-server-key.pem etcd-server.pem /etc/etcd/
+sudo cp ca.crt etcd-server.key etcd-server.crt /etc/etcd/
 }
 ```
 
