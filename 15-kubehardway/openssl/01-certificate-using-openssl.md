@@ -1,3 +1,31 @@
+### Create a dns host records on each node in /etc/hosts file
+#### Note: Check the IP Address and hostname in your setup given
+
+192.168.2.51 kubemaster01
+192.168.2.52 kubemaster02
+192.168.2.50 kubelb
+192.168.2.61 kubenode01
+192.168.2.62 kubenode02
+
+
+### Create direct login to other VM's by using sshkey
+
+ssh-keygen 
+
+#### from home directory copy id_rsa.pub to each other node
+
+cat .ssh/id_rsa.pub
+
+##### It looks like below
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCM0Evq2Zw+2N7sWXrm/O8vZPevCshyWtyfxSFjPbTnyDOOBaA7pCOiGGqrbTPjYzE2MUjmglTOAxP5I9EyhS8tO8Lmjrt4qDvEHJJLTXrwlZz6H3DQeFQptk+Kz7FFyaJHnCeV+o0rtxvmszTG0KJzcfI9oPLsiecATPSHNlZJ3WyLHrmcjVZkUT8eQMolvHaWiBi4fTsZXHMTQbHQC+ic9Lq51DNYxf3etsuODMSURIqgr9xf1WURLQNMX559cOfFJ8P+MvOHK4+Cjx7mCEr+W8SnmO8i4CrDLtueP1YEF1vxps6LHaov+RfwbjC/YXh1zs2ewXG+O2y6EiFocZh dinesh@kubemaster01
+
+###### Note By default .ssh folder does not exist
+Create folder first 
+`mkdir .ssh`
+cat >>~/.ssh/authorized_keys <<EOF
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6WZEGpP6HrjeUGyGB9IFl5mO0TAcHloWinn/0aqlGllgbUTMSVoTWCFdJsWvpelof20W2fVyHxcDNqE6xVxYqEqt8gL4I5mD9lBhxmlkfwDooJsEy9D5uGClugPeLqUBJLCi9+LDb1wTBUtyaOLvvLfC9MATziqND4va3bsQpH80Q7+DL2yONyoTW5SikjGJPkbpYBwID+q6F3neIo9F5c39mMXOXPwRMKEjnDYHyQQqJzcgvST8M9CDJdkMYYdhmbjQyG+bBwhzm+IzTJtafdX5tTmp83ES6zktIsGu4cX8RA0XMgqWwVlLAJI1oykSlnXpasAy51mgINDDBmzwN dinesh@kubemaster01
+EOF
+
 ### Install kubectl 
 
 refer https://kubernetes.io/docs/tasks/tools/install-kubectl/
@@ -164,28 +192,6 @@ openssl genrsa -out ${i}.key 2048
 openssl req -new -key ${i}.key -subj "/CN=system:node:${i}/O=system:nodes" -out ${i}.csr -config openssl-${i}.cnf
 openssl x509 -req -in ${i}.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out ${i}.crt -extensions v3_req -extfile openssl-${i}.cnf -days 1000
 
-{
-  kubectl config set-cluster kubernetes-the-hard-way \
-    --certificate-authority=ca.crt \
-    --embed-certs=true \
-    --server=https://${LOADBALANCER_ADDRESS}:6443 \
-    --kubeconfig=${i}.kubeconfig
-
-  kubectl config set-credentials system:node:${i} \
-    --client-certificate=${i}.crt \
-    --client-key=${i}.key \
-    --embed-certs=true \
-    --kubeconfig=${i}.kubeconfig
-
-  kubectl config set-context default \
-    --cluster=kubernetes-the-hard-way \
-    --user=system:node:${i} \
-    --kubeconfig=${i}.kubeconfig
-
-  kubectl config use-context default --kubeconfig=${i}.kubeconfig
-}
-
-
 done
 }
 ```
@@ -266,7 +272,7 @@ DNS.1 = kubernetes
 DNS.2 = kubernetes.default
 DNS.3 = kubernetes.default.svc
 DNS.4 = kubernetes.default.svc.cluster.local
-IP.1 = 10.32.0.1
+IP.1 = 10.96.0.1
 IP.2 = 192.168.2.51
 IP.3 = 192.168.2.52
 IP.4 = 192.168.2.50

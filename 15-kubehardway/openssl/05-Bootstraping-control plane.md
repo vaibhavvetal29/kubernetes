@@ -6,16 +6,13 @@ In this lab you will bootstrap the Kubernetes control plane across three compute
 
 The commands in this lab must be run on each controller instance: `kubemaster01`, `kubemaster02`
 
-
-
-
 ## Provision the Kubernetes Control Plane
 ```
 sudo mkdir -p /etc/kubernetes/config
 ```
 ### Download and install binaries
 ```
-KUBERNETES_VERSION=v1.13.0
+KUBERNETES_VERSION=v1.18.6
 wget -q --show-progress --https-only --timestamping \
   "https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kube-apiserver" \
   "https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kube-controller-manager" \
@@ -75,8 +72,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --authorization-mode=Node,RBAC \\
   --bind-address=0.0.0.0 \\
   --client-ca-file=/var/lib/kubernetes/ca.crt \\
-  --enable-admission-plugins=NodeRestriction,ServiceAccount \\
-  --enable-swagger-ui=true \\
+  --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\
   --enable-bootstrap-token-auth=true \\
   --etcd-cafile=/var/lib/kubernetes/ca.crt \\
   --etcd-certfile=/var/lib/kubernetes/etcd-server.crt \\
@@ -88,7 +84,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-client-certificate=/var/lib/kubernetes/kube-apiserver.crt \\
   --kubelet-client-key=/var/lib/kubernetes/kube-apiserver.key \\
   --kubelet-https=true \\
-  --runtime-config=api/all \\
+  --runtime-config='api/all=true' \\
   --service-account-key-file=/var/lib/kubernetes/service-account.crt \\
   --service-cluster-ip-range=10.96.0.0/24 \\
   --service-node-port-range=30000-32767 \\
@@ -109,7 +105,10 @@ Move the `kube-controller-manager` kubeconfig into place:
 
 ```
 sudo cp kube-controller-manager.kubeconfig /var/lib/kubernetes/
+```
+Create the `kube-controller-manager.service` systemd unit file:
 
+```
 cat <<EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
 [Unit]
 Description=Kubernetes Controller Manager
@@ -139,10 +138,22 @@ EOF
 
 ### kube scheduler service
 ```
-sudo mv kube-scheduler.kubeconfig /var/lib/kubernetes/
+sudo cp kube-scheduler.kubeconfig /var/lib/kubernetes/
 ```
 
-Create the `kube-scheduler service`:
+Create the `kube-scheduler.yaml` configuration file:
+
+```
+cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
+apiVersion: kubescheduler.config.k8s.io/v1alpha1
+kind: KubeSchedulerConfiguration
+clientConnection:
+  kubeconfig: "/var/lib/kubernetes/kube-scheduler.kubeconfig"
+leaderElection:
+  leaderElect: true
+EOF
+```
+Create the `kube-scheduler.service` systemd unit file:
 
 ```
 cat <<EOF | sudo tee /etc/systemd/system/kube-scheduler.service
@@ -152,9 +163,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-scheduler \\
-  --kubeconfig=/var/lib/kubernetes/kube-scheduler.kubeconfig \\
-  --address=127.0.0.1 \\
-  --leader-elect=true \\
+  --config=/etc/kubernetes/config/kube-scheduler.yaml \\
   --v=2
 Restart=on-failure
 RestartSec=5
@@ -165,8 +174,7 @@ EOF
 ```
 
 
-
-## Start all service
+## Start all Control plane service
 ```
 {
 sudo systemctl daemon-reload
@@ -177,13 +185,28 @@ sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
 }
 ```
 
+## use below command to check status of service
+
+```ssh
+
+for i in kube-apiserver kube-controller-manager kube-scheduler; do
+  systemctl status ${i} | grep -B 3 -A 3 "Active:"
+done
+```
+
+in case of issues check using below commands
+Let's check logs for kube-apiserver
+```
+journalctl -xe -u kube-apiserver
+```
+
+
 ### Test the cluster
 ```
 kubectl get componentstatuses --kubeconfig admin.kubeconfig
 ```
 
-#### LOad Balancer config
-
+#### Load Balancer config
 
 ##### Install HAProxy
 sudo apt-get update && sudo apt-get install -y haproxy

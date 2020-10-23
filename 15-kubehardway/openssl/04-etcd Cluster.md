@@ -61,8 +61,6 @@ ETCDSERVER02_INTERNAL_IP=192.168.2.52
 ETCDSERVER01=kubemaster01
 ETCDSERVER02=kubemaster02
 
-
-
 cat <<EOF | sudo tee /etc/systemd/system/etcd.service
 [Unit]
 Description=etcd
