@@ -209,8 +209,11 @@ kubectl get componentstatuses --kubeconfig admin.kubeconfig
 #### Load Balancer config
 
 ##### Install HAProxy
+```
 sudo apt-get update && sudo apt-get install -y haproxy
-
+```
+##### Add configuration for the haproxy
+```
 cat <<EOF | sudo tee /etc/haproxy/haproxy.cfg 
 frontend kubernetes
     bind 192.168.2.50:6443
@@ -225,15 +228,27 @@ backend kubernetes-master-nodes
     server kubemaster01 192.168.2.51:6443 check fall 3 rise 2
     server kubemaster02 192.168.2.52:6443 check fall 3 rise 2
 EOF
-
+```
+##### Restart the service to apply configuration
+```
 sudo service haproxy restart
+```
 
-
+##### Validate the LB Configuration
+```
 curl  https://192.168.2.50:6443/version -k
+```
 
+## RBAC for Kubelet Authorization
 
+In this section you will configure RBAC permissions to allow the Kubernetes API Server to access the Kubelet API on each worker node. Access to the Kubelet API is required for retrieving metrics, logs, and executing commands in pods.
 
-#### Do this on one of the node
+> This tutorial sets the Kubelet `--authorization-mode` flag to `Webhook`. Webhook mode uses the [SubjectAccessReview](https://kubernetes.io/docs/admin/authorization/#checking-api-access) API to determine authorization.
+
+The commands in this section will effect the entire cluster and only need to be run once from one of the controller nodes.
+
+Create the `system:kube-apiserver-to-kubelet` [ClusterRole](https://kubernetes.io/docs/admin/authorization/rbac/#role-and-clusterrole) with permissions to access the Kubelet API and perform most common tasks associated with managing pods:
+```
 cat << EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
@@ -255,8 +270,13 @@ rules:
     verbs:
       - "*"
 EOF
+```
+The Kubernetes API Server authenticates to the Kubelet as the `kubernetes` user using the client certificate as defined by the `--kubelet-client-certificate` flag.
 
-cat << EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
+Bind the `system:kube-apiserver-to-kubelet` ClusterRole to the `kubernetes` user:
+
+```
+cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -271,3 +291,4 @@ subjects:
     kind: User
     name: kubernetes
 EOF
+```
