@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    environment: production
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulsetapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      environment: production
+  template:
+    metadata:
+      labels:
+        environment: production
+    spec:
+      containers:
+      - name: statefullapp
+        image: nginx

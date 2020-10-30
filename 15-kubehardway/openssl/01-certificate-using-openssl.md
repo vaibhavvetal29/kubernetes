@@ -30,7 +30,7 @@ EOF
 
 refer https://kubernetes.io/docs/tasks/tools/install-kubectl/
 
-KUBECTLVERSION="v1.18.6"
+KUBECTLVERSION="v1.19.3"
 
 ##### Download file
 
