@@ -13,3 +13,6 @@ spec:
  - name: cache-volume
    emptyDir:
      medium: Memory
+
+
+     ## tmpfs

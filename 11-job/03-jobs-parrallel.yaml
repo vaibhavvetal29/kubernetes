@@ -1,18 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: consumer
+  name: consumerpa
 spec:
  parallelism : 5
  template:
   metadata:
-    name: consumer
+    name: consumerpa
   spec:
     containers:
     - name: consumer
       image: busybox
       command: ["/bin/sh","-c"]
       args: ["echo 'consuming a message'; sleep $(shuf -i 5-10 -n 1)"]
+      copy value fromm table to db1
     restartPolicy: OnFailure
 
 #shuf picking up random number

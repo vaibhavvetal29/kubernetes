@@ -1,4 +1,12 @@
+## RBAC
+To enable RBAC, start the API server with the --authorization-mode flag set to a comma-separated list that includes RBAC; for example:
+
+`kube-apiserver --authorization-mode=Example,RBAC --other-options --more-options`
+
 ## To manage RBAC in Kubernetes, we need to declare:
+
+
+
 
 ### Role and ClusterRole
     They are just a set of rules that represent a set of permissions. A Role can only be used to grant access to resources within namespaces. A ClusterRole can be used to grant the same permissions as a Role but they can also be used to grant access to cluster-scoped resources, non-resource endpoints.
@@ -6,6 +14,8 @@
     A subject is the entity that will make operations in the cluster. They can be user accounts, services accounts or even a group.
 ### RoleBinding and ClusterRoleBinding
     As the name implies, it’s just the binding between a subject and a Role or a ClusterRole.
+
+
 
 ## The default Roles defined in Kubernetes are:
     view: read-only access, excludes secrets

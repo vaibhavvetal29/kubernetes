@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: mygoldpvc1
+spec:
+ storageClassName: gold
+ accessModes:
+   - ReadWriteMany
+ resources:
+   requests:
+     storage: 1Gi

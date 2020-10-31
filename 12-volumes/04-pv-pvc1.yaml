@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+ name: hostpath-pd-pv1
+spec:
+ containers:
+ - image: nginx
+   name: hostpath-pd
+   volumeMounts:
+   - mountPath: /data
+     name: test-volume
+ volumes:
+ - name: test-volume
+   persistentVolumeClaim:
+     claimName: myvol
+
+
+# Check out what error exist in above pods

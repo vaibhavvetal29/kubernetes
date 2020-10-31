@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: myvol
+  name: mygoldvol
 spec:
-  storageClassName: manual
+  storageClassName: gold
   capacity:
     storage: 5Gi
   accessModes:
@@ -16,11 +16,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
- name: myvol
+ name: mygoldpvc
 spec:
- storageClassName: manual
+ storageClassName: gold
  accessModes:
-   - ReadWriteOnce
+   - ReadWriteMany
  resources:
    requests:
      storage: 1Gi
@@ -40,7 +40,7 @@ spec:
  volumes:
  - name: test-volume
    persistentVolumeClaim:
-     claimName: myvol
+     claimName: mygoldpvc
 
 
 # Check out what error exist in above pods

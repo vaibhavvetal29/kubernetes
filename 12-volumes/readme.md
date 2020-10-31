@@ -11,7 +11,7 @@ A PersistentVolume (PV) is a piece of storage in the cluster that has been provi
 
 When you use a Persistent Volume Claim, you only care about the requirements of your application. For example, how much space it needs and the access type. Access types define whether or not multiple nodes can access the volume. So, we have:
 
-ReadWriteOnce where only one node is allowed access to the volume.
+ReadWriteOnce where only one pod is allowed access to the volume.
 ReadOnlyMany where one is allowed full access and other nodes are allowed read-only permissions
 ReadWriteMany for volumes that can be shared among many nodes and all of them have full access to it.
 
