@@ -78,3 +78,8 @@ for node in 192.168.2.74 192.168.2.73 192.168.2.72 192.168.2.71; do
     ssh -t $node sudo shutdown
 done
 ```
+
+for node in 192.168.2.62 192.168.2.61 192.168.2.52 192.168.2.51; do 
+    echo "working on" $node
+    ssh -t $node sudo shutdown
+done

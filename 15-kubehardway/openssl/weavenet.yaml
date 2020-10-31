@@ -173,6 +173,8 @@ items:
                     fieldRef:
                       apiVersion: v1
                       fieldPath: spec.nodeName
+                - name: IPALLOC_RANGE
+                  value: 10.96.0.0/16
               image: 'docker.io/weaveworks/weave-kube:2.7.0'
               readinessProbe:
                 httpGet:
@@ -255,3 +257,7 @@ items:
                 type: FileOrCreate
       updateStrategy:
         type: RollingUpdate
+
+
+
+# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
