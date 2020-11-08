@@ -1,0 +1,118 @@
+### Refer https://kubernetes.io/docs/reference/access-authn-authz/authentication/
+### https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#normal-user
+
+
+## Normal user
+
+A few steps are required in order to get a normal user to be able to
+authenticate and invoke an API. First, this user must have certificate issued
+by the Kubernetes cluster, and then present that Certificate to the API call
+as the Certificate Header or through the kubectl.
+
+### Create private key
+
+The following scripts show how to generate PKI private key and CSR. It is
+important to set CN and O attribute of the CSR. CN is the name of the user and
+O is the group that this user will belong to. You can refer to
+[RBAC](/docs/reference/access-authn-authz/rbac/) for standard groups.
+
+```shell
+openssl genrsa -out prashant.key 2048
+openssl req -new -key prashant.key -out prashant.csr
+
+cat prashant.csr | base64
+# Let's save it in the variable
+prashantcsr=$(cat prashant.csr | base64 | tr -d "\n")
+```
+
+### Create CertificateSigningRequest
+
+Create a CertificateSigningRequest and submit it to a Kubernetes Cluster via kubectl. Below is a script to generate the CertificateSigningRequest.
+
+```shell
+cat <<EOF | kubectl apply -f -
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: prashant
+spec:
+  groups:
+  - system:authenticated
+  request: $prashantcsr
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+  - client auth
+EOF
+```
+
+Some points to note:
+
+- `usages` has to be '`client auth`'
+
+### Approve certificate signing request
+
+Use kubectl to create a CSR and approve it.
+
+Get the list of CSRs:
+
+```shell
+kubectl get csr
+```
+
+Approve the CSR:
+
+```shell
+kubectl certificate approve prashant
+```
+
+### Get the certificate
+
+Retrieve the certificate from the CSR:
+
+```shell
+kubectl get csr/prashant -o yaml
+```
+
+The certificate value is in Base64-encoded format under `status.certificate`.
+
+### Create Role and RoleBinding
+
+With the certificate created. it is time to define the Role and RoleBinding for
+this user to access Kubernetes cluster resources.
+
+This is a sample script to create a Role for this new user:
+
+```shell
+kubectl create role developer --verb=create --verb=get --verb=list --verb=update --verb=delete --resource=pods
+```
+
+This is a sample command to create a RoleBinding for this new user:
+
+```shell
+kubectl create rolebinding developer-binding-prashant --role=developer --user=prashant
+```
+
+### Add to kubeconfig
+
+The last step is to add this user into the kubeconfig file.
+This example assumes the key and certificate files are located at "/home/vagrant/work/".
+
+First, you need to add new credentials:
+
+```
+kubectl config set-credentials prashant --client-key=prashant.key --client-certificate=prashant.crt --embed-certs=true
+
+```
+
+Then, you need to add the context:
+
+```
+kubectl config set-context prashant --cluster=kubernetes --user=prashant
+```
+
+To test it, change the context to `prashant`:
+
+```
+kubectl config use-context prashant
+```
+

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-host-example
+  namespace: dev
+spec:
+  rules:
+  - host: host.hello.local
+    http:
+      paths:
+      - path: /first
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service
+            port:
+              number: 80

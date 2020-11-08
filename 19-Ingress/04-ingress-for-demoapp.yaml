@@ -1,0 +1,13 @@
+## Simple Example of Ingress backed by a single Service
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  namespace: dev
+spec:
+  defaultBackend:
+    service:
+      name: hello-service
+      port:
+        number: 80

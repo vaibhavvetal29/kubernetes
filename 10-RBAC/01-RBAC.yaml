@@ -14,8 +14,9 @@ metadata:
   namespace: rbac
 rules:
   - apiGroups: [ apps ]
-    resources: [ deployments ]
+    resources: [ "deployments", "pods" ]
     verbs: [ get, list ]
+    resourcesNames: ["App1"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
