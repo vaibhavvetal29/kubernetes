@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoapp3
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: demoapp3
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: demoapp3
+    spec:
+      containers:
+      - name: hello
+        image: nginx
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demoapp3svc
+  namespace: dev
+  labels:
+    app: demoapp3svc
+spec:
+  type: ClusterIP
+  selector:
+    app: demoapp3
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP

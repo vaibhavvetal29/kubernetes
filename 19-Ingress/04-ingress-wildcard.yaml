@@ -1,27 +1,27 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: simple-host-example
+  name: ingress-wildcard-host
   namespace: dev
 spec:
   rules:
-  - host: host.hello.local
+  - host: "test.local"
     http:
       paths:
-      - path: "/"
-        pathType: Prefix
+      - pathType: Prefix
+        path: "/test"
         backend:
           service:
             name: hello-service
             port:
               number: 80
-  - host: host2.hello.local
+  - host: "test.local"
     http:
       paths:
-      - path: "/"
-        pathType: Prefix
+      - pathType: Prefix
+        path: "/dinesh"
         backend:
           service:
-            name: demoapp3svc
+            name: ninxservice
             port:
               number: 80
