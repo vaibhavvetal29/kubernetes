@@ -59,11 +59,6 @@ helm search hub mysql
 
 helm search repo stable
 
-## add specific repo
-
-helm repo add stable https://kubernetes-charts.storage.googleapis.com
-
-
 ## helm repo list
 
 `helm repo list`
@@ -109,4 +104,311 @@ helm create mychart
 
 basic structure will be created.
 
-## check deployment file
+## Check the folder structure of the mychart created
+
+> Chart.yaml  # A YAML file containing information about the chart.  
+> LICENSE     # OPTIONAL :- A plain text file containing license of the chart.
+> README      # OPTIONAL :- A human-readable README file.  
+> values.yaml # the default configuration values for this chart.  
+> charts/     # A directory containing any charts upon which this chart depends.  
+> templates/  # A directory of templates that, when combined with values will generate valid kubernetes files.  
+
+
+
+## Let's create chart from scratch
+`helm create customchart`
+`rm -rf customchart/charts/* customchart/templates/*`
+
+## let's create resources in /templates
+create configmap.yaml
+
+```sh
+kubectl create configmap customchart-configmap --from-literal=myname="dinesh patil" --dry-run=client -o yaml >customchart/templates/configmap.yaml
+```
+
+## Let's Install the chart
+
+helm install demo-configmap ./customchart
+
+## let's remove chart
+helm uninstall demo-configmap
+
+
+## Let'd use templates
+change the name as below
+```yaml
+apiVersion: v1
+data:
+  myname: dinesh patil
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name}}-configmap
+```
+
+### Check Predefined Values at [link](https://helm.sh/docs/topics/charts/)
+
+## Let's defined few values
+> 1) add below code in values.yaml
+> 2) update value in the configmap as below
+```yaml
+apiVersion: v1
+data:
+  myname: dinesh patil
+  function: {{ .Values.function}}  ## Check this line
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name}}-configmap
+```
+
+### let's test release
+`helm install --debug --dry-run debugrun ./customchart`
+
+### Let's install the chart
+```bash
+helm install debugrun ./customchart
+
+# Let's get details related to the already installed helm chart
+helm get manifest debugrun
+```
+
+## Set values from command at runtime
+helm install --debug --dry-run debugrun ./customchart --set function=sales
+
+
+## Templates function
+add more values in values.yaml
+
+```yaml
+function: Devops
+dept: IT
+infra:
+   location: mumbai
+   floor: 2,3,4
+```
+
+## add below in configmap
+```yaml
+apiVersion: v1
+data:
+  myname: dinesh patil
+  function: {{ .Values.function}}
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name}}-configmap
+  location: {{ upper .Values.infra.location }} # upper will upper the case
+  floor: {{quote .Values.infra.floor }} # quote will add values with quote
+```
+## checkout function to used at
+> [gotemplate](https://godoc.org/text/template)
+> [spring templates](http://masterminds.github.io/sprig/)
+
+## Template pipeline and default Values
+### See below values 
+```yaml
+location: {{ .Values.infra.location | upper | quote }} # upper will upper the case
+date: {{ now | date "2006-01-02" | quote " }}
+``` 
+### Note: date formatting in the go language is different [Refer](https://golang.org/pkg/time/)
+
+
+## What if someone doesn't provide value for something
+
+```yaml
+company: {{ .Values.company | default "NTMS" | upper | quote }} # upper will upper the case
+```
+
+## Flow Control
+```go
+{{ if PIPELINE}}
+  # Do something
+{{ else if OTHER PIPELINE}}
+  # Do something else
+{{ else }}
+  # Default 
+{{ end }}
+```
+
+### **pipeline will be consider as false when**
+
+> a Boolean false
+> a numeric zero
+> an empty string
+> a nil (empty or null)
+> an empty collection (map, slice, tuple, dict, array)
+
+## add below in config.yaml to test if flow control
+ ```go
+ {{ if eq .Values.infra.location "mumbai"}}sub-location: powai {{ end }}
+ ```
+
+ ## change the value of the location and test
+ 
+
+ ## Now check other way around
+ ```go
+ {{ if eq .Values.infra.location "mumbai"}}
+ sub-location: powai 
+ {{ end }}
+ ```
+
+ ### Did you notice any issue ?
+
+ #### Yes that's blank lines in yaml files
+
+##### add - at beginning to remove the new line
+{{- if eq .Values.infra.location "mumbai"}}
+
+#### Try to achieve the same using - before last bracket 
+#### Check what happened
+
+## Modifying scope with 'with'
+```go
+{{ with PIPELINE}}
+  ## Restricted scope
+{{ end }}
+```
+### Let's add some more data in the values.yaml
+```yaml
+tags:
+  rack: base1
+  storagevendor: netapp
+```
+### Let's add some more data in the configmap.yaml
+```yaml
+{{- with .Values.tags}}
+  RackID: {{ .rack | quote }}
+  storagevendor: {{ .storagevendor | quote}}
+  {{- end}}
+```
+#### NOTE: You will not have access to builtin object 
+
+
+## Using Range (Looping)
+{{- range .Values.collection}}
+  - {{. | title | quote}}
+{{- end}}
+
+```yaml
+## In values.yaml
+Language:
+   - Python
+   - Ruby
+   - Java
+   - Powershell
+
+## In configmap
+  Language: |
+    {{- range .Values.Language }}
+    - {{ . | quote}}
+    {{- end}}
+```
+
+## Variables
+
+$name := .Release.Name
+
+```yaml
+# In template configmap
+{{- $relname := .Release.Name -}}
+Release: {{$relname}}
+```
+
+## Now let's use variable in range
+
+```yaml
+  Language: |-
+    {{- range $index, $lang := .Values.Language }}
+    - {{ $index }}: {{ $lang }}
+    {{- end}}
+```
+
+## Global Variable $
+
+```yaml
+metadata:
+  labels:
+    helm.sh/chart : "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+```
+
+## Include content from the same file (Reusability)
+#### named templates
+```yaml
+# remove labels from configmap.yaml. add below lines at start of the yaml file
+{{- define "customchart.systemlables" }}
+  labels:
+     function: IT
+     app: frontend
+{{- end }}
+
+## Now let's use in chart
+{{- template "customchart.systemlabels"}}
+```
+
+### Template using otehr file
+####  create new file in templates folder _helpers.tpl
+#### Add below content in the same
+```yaml
+{{- define "customchart.systemlables" }}
+  labels:
+     function: IT
+     app: frontend
+{{- end }}
+#### Try to run dry run
+
+# Add few more things in the _helpers.tpl
+{{- define "customchart.systemlables" }}
+  labels:
+     function: IT
+     app: frontend
+     releasename: "{{ $.Release.Name }}"
+{{- end }}
+
+## Try Dry run now
+# What do you observe ? That's scope issue
+
+{{- define "customchart.systemlables" .}} # added "." to add current scope (local)
+{{- define "customchart.systemlables" $}} # added "$" for global scope
+
+
+## Include keyword (In case you have to have expected alignment)
+{{- define "customchart.version" -}}
+app_name: {{ .Chart.Name }}
+app_version: "{{ .Chart.Version }}"
+{{- end -}}
+
+## Try to use template and observe change
+
+## Now how can we achieve the expected results
+
+## Add one more in the _helper
+{{- define "customchart.appinfo" }}
+app_name: "{{ .Chart.Name }}"
+app_version: "{{ .Chart.Version }}"
+{{- end }}
+
+# Now add below in configmap
+  labels: 
+  {{- include "customchart.appinfo" . | indent 3 }}
+
+```
+
+## Creating notes 
+### Add new file NOTES in templates
+```Notes
+Your application is install!! enjoy
+```
+
+
+## Subcharts
+### Create a subchart in the parent chart
+
+#### try to dry run
+
+Add values for the mysubchart in parent
+
+
+
+
+
+
+
