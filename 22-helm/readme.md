@@ -408,7 +408,17 @@ Add values for the mysubchart in parent
 
 
 
+## Chart repository
+HTTP server hosting index.yaml file along with chrat packages [referindexfile](https://helm.sh/docs/topics/chart_repository/)
 
+
+$ helm create mychart
+$ helm package mychart
+$ mv mychart-0.1.0.tgz docs
+$ helm repo index docs --url https://technosophos.github.com/tscharts
+$ git add -i
+$ git commit -av
+$ git push origin master
 
 
 

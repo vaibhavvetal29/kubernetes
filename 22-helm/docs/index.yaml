@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  customchart:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2020-11-27T18:09:37.413037427Z"
+    description: A Helm chart for Kubernetes
+    digest: 8f09c1ff2af20842a9d28b3402b916317c3a4fb86b5cbac647d6c56c7d1cfd8d
+    name: customchart
+    type: application
+    urls:
+    - https://dineshazpatil.github.io/tscharts/customchart-0.1.0.tgz
+    version: 0.1.0
+generated: "2020-11-27T18:09:37.412202455Z"

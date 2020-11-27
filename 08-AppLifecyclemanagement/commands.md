@@ -118,6 +118,12 @@ echo -n "dinesh" | base64
 
 Create POD with multicontaien rin it
 
-### initContainers
- 
+
+ ### [Init Containers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+ This page provides an overview of init containers: specialized containers that run before app containers in a Pod. Init containers can contain utilities or setup scripts not present in an app image.
+
+#### Init containers are exactly like regular containers, except:
+        Init containers always run to completion.
+        Each init container must complete successfully before the next one starts.
+
 
