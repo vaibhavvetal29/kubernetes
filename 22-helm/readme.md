@@ -412,13 +412,45 @@ Add values for the mysubchart in parent
 HTTP server hosting index.yaml file along with chrat packages [referindexfile](https://helm.sh/docs/topics/chart_repository/)
 
 
-$ helm create mychart
-$ helm package mychart
-$ mv mychart-0.1.0.tgz docs
-$ helm repo index docs --url https://technosophos.github.com/tscharts
-$ git add -i
-$ git commit -av
-$ git push origin master
+let's create repo in the github
+
+create new repo
+
+add required permission with token
+user> developer settings > PAT
+
+echo "# helmrepo" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/dineshazpatil/helmrepo.git
+git push -u origin main
 
 
+create test chart
+
+`helm create gitrepochart`
+
+create package out of your chart
+`helm package /home/dinesh/gitrepochart`
+
+build index
+`helm repo index`
+
+git add .
+git commit -m chart added
+git push -u origin master
+
+
+get raw repo link
+https://raw.githubusercontent.com/dineshazpatil/helmrepo/main/
+
+helm repo list
+
+helm repo add --username dineshazpatil@outlook.com --password f7d9ec6dcd93215f99502eff4de9d4bdd0f62ed5 myhelmrepo https://raw.githubusercontent.com/dineshazpatil/helmrepo/main/
+
+
+addd new chart
+helm repo update
 

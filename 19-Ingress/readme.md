@@ -88,6 +88,12 @@ https://github.com/kubernetes/ingress-nginx/blob/master/deploy/static/provider/b
 ## Detect installed version
 To detect which version of the ingress controller is running, exec into the pod and run nginx-ingress-controller version command.
 
+192.168.2.71
+2.72
+2.73
+2.74
+
+
 ```ssh
 POD_NAMESPACE=ingress-nginx  
 
