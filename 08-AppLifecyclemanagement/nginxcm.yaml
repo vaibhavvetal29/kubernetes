@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginxcm
+  name: nginxcm
+spec:
+  containers:
+  - env:
+    - name: var
+      value: test
+    - name: fromcm
+      valueFrom:
+         configMapKeyRef:
+            name: cmfromfile
+            key: myconfigmap
+    image: nginx
+    name: nginxcm
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

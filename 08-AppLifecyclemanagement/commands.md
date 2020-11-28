@@ -88,13 +88,14 @@ env:
 
 ### Config Maps: /// Trubleshoot what is missing in below configmap command
 `kubectl create configmap --from-literal=myuser=dinesh`
-`kubectl create configmap --from-literal=myuser=dinesh --from-literal=mylastname=patil`
+`kubectl create configmap seperatedata --from-literal=myuser=dinesh --from-literal=mylastname=patil`
 ```yaml
 env:
             - name: usernameref
               valueFrom:
                 configMapKeyRef:
-                    name: namemaps1
+                    name: seperatedata
+                    key: myuser
 ```
 
 
