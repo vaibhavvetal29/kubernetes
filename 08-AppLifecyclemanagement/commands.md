@@ -88,14 +88,13 @@ env:
 
 ### Config Maps: /// Trubleshoot what is missing in below configmap command
 `kubectl create configmap --from-literal=myuser=dinesh`
-`kubectl create configmap seperatedata --from-literal=myuser=dinesh --from-literal=mylastname=patil`
+`kubectl create configmap --from-literal=myuser=dinesh --from-literal=mylastname=patil`
 ```yaml
 env:
             - name: usernameref
               valueFrom:
                 configMapKeyRef:
-                    name: seperatedata
-                    key: myuser
+                    name: namemaps1
 ```
 
 
@@ -112,6 +111,8 @@ envFrom:
 `kuebctl create secret mysecret --from-literal=myuser="dinesh"`
 
 echo -n "dinesh" | base64
+
+
 
 ### Multicontainer Pods
 

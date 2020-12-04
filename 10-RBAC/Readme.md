@@ -537,3 +537,13 @@ In order from most secure to least secure, the approaches are:
       --clusterrole=cluster-admin \
       --group=system:serviceaccounts
     ```
+
+
+## Few commands to check RBAC
+```bash
+kubectl auth can-i get pods --all-namespaces
+
+kubectl auth can-i delete pods
+
+
+```

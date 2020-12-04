@@ -27,16 +27,16 @@
 ### From Script
 Helm now has an installer script that will automatically grab the latest version of Helm and install it locally.
 
-> `curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3`  
-> `chmod 700 get_helm.sh`  
-> `./get_helm.sh`  
+> `curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3`
+> `chmod 700 get_helm.sh`
+> `./get_helm.sh`
 
 
 ### Add stable repo
 
-> `helm repo add stable https://charts.helm.sh/stable`  
-> `helm search repo stable`  
-> `helm repo update `  
+> `helm repo add stable https://charts.helm.sh/stable`
+> `helm search repo stable`
+> `helm repo update `
 
 ### Install stable chart
 > `helm install stable/mysql --generate-name`
