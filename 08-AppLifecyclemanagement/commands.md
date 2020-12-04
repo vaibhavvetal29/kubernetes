@@ -113,8 +113,6 @@ envFrom:
 
 echo -n "dinesh" | base64
 
-
-
 ### Multicontainer Pods
 
 Create POD with multicontaien rin it
