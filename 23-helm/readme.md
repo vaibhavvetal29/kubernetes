@@ -185,7 +185,7 @@ infra:
    location: mumbai
    floor: 2,3,4
 ```
-
+.Values.infra.flooor
 ## add below in configmap
 ```yaml
 apiVersion: v1
@@ -195,8 +195,9 @@ data:
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name}}-configmap
-  location: {{ upper .Values.infra.location }} # upper will upper the case
-  floor: {{quote .Values.infra.floor }} # quote will add values with quote
+  labels:
+  - location: {{ upper .Values.infra.location }} # upper will upper the case
+  - floor: {{quote .Values.infra.floor }} # quote will add values with quote
 ```
 ## checkout function to used at
 > [gotemplate](https://godoc.org/text/template)
@@ -255,11 +256,19 @@ company: {{ .Values.company | default "NTMS" | upper | quote }} # upper will upp
 
  #### Yes that's blank lines in yaml files
 
-##### add - at beginning to remove the new line
+##### add - at beginning to remove the new line 
 {{- if eq .Values.infra.location "mumbai"}}
+
+##### Try to check by adding space
+ {{ if eq .Values.infra.location "mumbai"}}
+   sub-location: powai 
+ {{ end }}
+
 
 #### Try to achieve the same using - before last bracket 
 #### Check what happened
+
+#### IF dept is IT then in deployment replicas should be 2
 
 ## Modifying scope with 'with'
 ```go
@@ -303,6 +312,9 @@ Language:
     {{- end}}
 ```
 
+foreach $i in $values.Language
+  - "$i"
+
 ## Variables
 
 $name := .Release.Name
@@ -344,7 +356,7 @@ metadata:
 {{- template "customchart.systemlabels"}}
 ```
 
-### Template using otehr file
+### Template using other file
 ####  create new file in templates folder _helpers.tpl
 #### Add below content in the same
 ```yaml

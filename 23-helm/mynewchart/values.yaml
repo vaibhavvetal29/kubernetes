@@ -1,24 +1,8 @@
-# Default values for customchart.
+# Default values for mynewchart.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-
-function: Devops
-dept: IT
-infra:
-   location: mumbai
-   floor: 2,3,4
 replicaCount: 1
-
-Language: 
-   - Python
-   - Ruby
-   - Java
-   - Powershell
-
-tags:
-  rack: base1
-  storagevendor: netapp
 
 image:
   repository: nginx

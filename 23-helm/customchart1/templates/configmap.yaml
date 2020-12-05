@@ -1,0 +1,29 @@
+apiVersion: v1
+data:
+  myname: dinesh patil
+  function: {{ .Values.function }}
+  location: {{ upper .Values.infra.location }} # upper will upper the case
+  floor: {{ quote .Values.infra.floor }} # quote will add values with quote
+  date: {{ now | date "2006-01-02" | quote }}
+  company: {{ .Values.company | default "NTMS" | upper | quote }}
+  {{- if eq .Values.infra.location "mumbai"}}
+  sub-location: powai 
+  {{- end }}
+  {{- $relname := .Release.Name -}}
+  {{- with .Values.tags}}
+  RackID: {{ .rack | quote }}
+  storagevendor: {{ .storagevendor | quote}}
+  release: {{ $relname }}
+  {{- end }}
+  Language: |-
+    {{- range $index, $lang := .Values.Language }}
+    - {{ $index }}: {{ $lang }}
+    {{- end}}
+  
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+  labels: 
+  {{- include "customchart.appinfo" . | indent 3 }}
+
+  

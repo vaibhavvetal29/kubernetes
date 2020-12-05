@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  {{- template "customchart.systemlabels" .}}
+  name: testdeploy
+spec:
+  replicas: {{ if eq .Values.dept "IT" }}2 {{ else }}1 {{ end }}
+  selector:
+    matchLabels:
+      app: testdeploy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: testdeploy
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
